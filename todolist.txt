@@ -1,0 +1,2 @@
+for the auto_increment on phpmyadmin:
+  https://stackoverflow.com/questions/19434801/how-to-add-auto-increment-to-column-in-mysql-database-using-phpmyadmin

@@ -1,2 +1,2 @@
-for the auto_increment on phpmyadmin:
-  https://stackoverflow.com/questions/19434801/how-to-add-auto-increment-to-column-in-mysql-database-using-phpmyadmin
+When logged in suppress the "Login/Register" and replace with Username
+Allow to post messages only when logged in, with username at the right of the title

@@ -1,10 +1,14 @@
 <style>
+    body {
+        margin: 0px;
+        background-color: rgb(250,250,250);
+    }
     #menu ul {
         list-style-type: none;
         margin: 0;
         padding: 0;
         width: 25%;
-        background-color: #c7c7c7;
+        background-color: rgb(200, 200, 200);
         height: 100%; 
         position: fixed; 
         overflow: auto;
@@ -17,37 +21,37 @@
         text-align: center;
     }
     #menu li a:hover:not(.active) {
-        background-color: #555;
+        background-color: rgb(236, 159, 5);
         color: white;
     }
     #menu .active {
-        background-color: #4CAF50;
+        background-color: rgb(142, 166, 4);
         color: white;
     }
     #menu div.rightAlign{
         margin-top: 50px;
     }
-    @media screen and (max-width: 900px) {
-        #menu ul.sidenav {
-            width: 100%;
-            height: auto;
-            position: relative;
-        }
-        #menu ul.sidenav li a {
-            float: left;
-            padding: 15px;
-        }
-        div.content {
-            margin-left: 0;
-        }
-        #menu div.rightAlign li{
-            float: right;
-        }
-        #menu div.rightAlign{
-            margin-top: 0px;
-        }
+    #menu ul.sidenav {
+        width: 100%;
+        height: auto;
+        position: relative;
     }
-    @media screen and (max-width: 500px) {
+    #menu ul.sidenav li a {
+        float: left;
+        padding: 15px;
+    }
+    div.content {
+        margin-left: 0;
+        padding: 0px;
+    }
+    #menu div.rightAlign li{
+        float: right;
+    }
+    #menu div.rightAlign{
+        margin-top: 0px;
+    }
+
+    @media screen and (max-width: 550px) {
         #menu ul.sidenav li a {
             text-align: center;
             float: none;
@@ -68,8 +72,19 @@
     <li><a <?php if ($activate == '3'){echo 'class="active"';} ?> href="input.php">Inspire</a></li>
     <li><a <?php if ($activate == '4'){echo 'class="active"';} ?> href="about.php">About</a></li>
     <div class="rightAlign">
-    <li><a <?php if ($activate == '6'){echo 'class="active"';} ?> href="login.php">Login</a></li>
-    <li><a <?php if ($activate == '5'){echo 'class="active"';} ?> href="register.php">Register</a></li>
+    <?php
+    if (isset($_SESSION['username'])){
+    ?>
+        <li><a <?php if ($activate == '7'){echo 'class="active"';} ?> href="account.php">Logged in as:  <?php echo $_SESSION['username'] ?></a></li>
+    <?php
+    }
+    else{
+    ?>
+        <li><a <?php if ($activate == '6'){echo 'class="active"';} ?> href="login.php">Login</a></li>
+        <li><a <?php if ($activate == '5'){echo 'class="active"';} ?> href="register.php">Register</a></li>
+    <?php
+    }
+    ?>
     </div>
 </ul>
 </div>

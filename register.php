@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,13 +8,6 @@
 <meta charset="utf-8" />
 <title>Une idée?</title>
 <style>
-body {
-    margin: 0px;
-}
-div.content {
-    margin-left: 25%;
-    padding: 0px 10px;
-}
 .form-style-1 {
     margin: auto;
     max-width: 800px;
@@ -74,6 +70,11 @@ div.content {
 .form-style-1 .required{
     color:red;
 }
+.glob{
+    padding: 10px;
+    background-color: rgb(170,170,170);
+    margin: 0px;
+}
 </style>
 </head>
 <body>
@@ -85,26 +86,80 @@ include("menu.php");
 
 <!--Input-->
 <div class="content" align="center">
-<form>
+
+<?php
+$astoshow = false;
+if(isset($_POST['usname']) AND isset($_POST['mail']) AND isset($_POST['passwd']))
+{
+    try
+    {
+        $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', 'lumi/2003');
+    }
+    catch(Exception $e)
+    {
+        die('Erreur : '.$e->getMessage());
+    }
+
+    $verif = $bdd->prepare("SELECT id FROM users WHERE username = :usna");
+    $verif->execute(array('usna' => $_POST['usname']));
+
+    $verifm = $bdd->prepare("SELECT id FROM users WHERE email = :mail");
+    $verifm->execute(array('mail' => $_POST['mail']));
+
+    if(strlen(trim($_POST['passwd'])) < 6){
+        echo '<div class="glob"><h3>Password is too short</h3></div>';
+        $astoshow = true;
+    }
+    elseif(trim($_POST['usname']) == ""){
+        echo '<div class="glob"><h3>You must enter a username</h3></div>';
+        $astoshow = true;
+    }
+    elseif($verif->fetch()['id'] != ""){
+        echo '<div class="glob"><h3>Username already taken</h3></div>';
+        $astoshow = true;
+    }
+    elseif($verifm->fetch()['id'] != ""){
+        echo '<div class="glob"><h3>Email already taken</h3></div>';
+        $astoshow = true;
+    }
+    else{
+        $req = $bdd->prepare("INSERT INTO users (username, email, password) VALUES(:username, :email, :password)");
+        $req->execute(array(
+            'username' => $_POST['usname'],
+            'email' => $_POST['mail'],
+            'password' => password_hash($_POST['passwd'], PASSWORD_DEFAULT)
+        ));
+        header("location: login.php");
+    }
+}
+else{
+    $astoshow = true;
+}
+
+if($astoshow == true){
+?>
+<form action="register.php" method="post">
 <ul class="form-style-1">
     <li>
-        <label>Full Name <span class="required">*</span></label>
-        <input type="text" name="field1" class="field-divided" placeholder="First" />&nbsp;
-        <input type="text" name="field2" class="field-divided" placeholder="Last" />
+        <label>Username</label>
+        <input type="text" name="usname" class="field-long" placeholder="Ex: BarFoo" />
     </li>
     <li>
-        <label>Email <span class="required">*</span></label>
-        <input type="email" name="field3" class="field-long" />
+        <label>Email</label>
+        <input type="email" name="mail" class="field-long" placeholder="Ex: barfoo@email.com" />
     </li>
     <li>
-        <label>Password <span class="required">*</span></label>
-        <input type="password" name="field4" class="field-long" />
+        <label>Password</label>
+        <input type="password" name="passwd" class="field-long" placeholder="Ex: S3cr3t"/>
     </li>
     <li>
-        <input type="submit" value="Register" />
+        <input type="submit" value="Register"/>
     </li>
 </ul>
 </form>
+<?php
+}
+?>
 </div>
 </body>
 </html>

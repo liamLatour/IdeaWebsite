@@ -9,33 +9,62 @@ session_start();
     <link rel="stylesheet" type="text/css" href="color.css">
     <title>Une idée?</title>
     <style>
-    a{
+    a.button {
         text-decoration: none;
-        color: black;
+        color: initial;
+        padding: 10px 10px;
+    }
+    a.button:hover{
+        background-color: rgb(220, 220, 220);
+    }
+    .idea{
+        background-color: rgb(220, 220, 220);
+        margin-top: 20px;
+        margin-bottom: 30px;
+        margin-right: 40px;
+        margin-left: 40px;
+        max-width: 800px;
+    }
+    .postidea{
+        background-color: rgb(238, 238, 238);
+        padding: 50px 10px;
     }
     p{
         padding: 20px;
         margin: auto;
     }
+    table, td {
+        background-color: rgb(150, 150, 150);
+        padding: 5px;
+    }
     td{
         text-align: center;
 
     }
-    tr{
-        width: 70%;
+    .title{
+        background-color: rgb(170,170,170);
     }
     </style>
 </head>
 <body>
 <!--Menu-->
 <?php 
-$activate = '2';
+$activate = '1';
 include("menu.php");
 ?>
 
+<style>
+.content{
+    padding: 10px 10px;
+}
+</style>
+
 <!--Input-->
 <div class="content" align="center">
-<h1>Last Ideas given</h1>
+<div class="postidea">
+<a href="input.php" class="button">Post an Idea</a>
+<h2>Last ideas</h2>
+</div>
 
 <?php
 try
@@ -47,12 +76,10 @@ catch(Exception $e)
         die('Erreur : '.$e->getMessage());
 }
 
-$reponse = $bdd->query('SELECT * FROM news WHERE parent=0 ORDER BY id DESC');
+$reponse = $bdd->query('SELECT * FROM news WHERE parent=0 ORDER BY id DESC LIMIT 0, 5');
 
-while ($donnees = $reponse->fetch())
-{
+while ($donnees = $reponse->fetch()){
 ?>
-    <a href="Idea.php?id=<?php echo $donnees['id'] ?>">
     <div class="idea<?php echo $donnees['categorie'] ?>">
         <table class="table" border=0 style="table-layout: fixed; width:100%">
             <td class="td">By: <?php echo htmlspecialchars($donnees['owner']);?></td>
@@ -62,11 +89,7 @@ while ($donnees = $reponse->fetch())
         <p>
             <?php echo htmlspecialchars($donnees['contenu']); ?>
         </p>
-        <form>
-
-        </form>
     </div>
-    </a>
 <?php
 }
 $reponse->closeCursor();

@@ -69,6 +69,8 @@ Had some kind of categories:
 
 <div class="content" align="center">
 <?php
+$hasttoshow = false;
+
 if(isset($_SESSION['username'])){
     if(isset($_POST['field5']) AND isset($_POST['field3']) AND isset($_POST['type']))
     {
@@ -104,59 +106,14 @@ if(isset($_SESSION['username'])){
             <?php
         }
         else{
-        ?>
-        <form action="input.php" method="post">
-        <ul class = "type">
-            <li>
-                <label>
-                <input type="radio" name="type" value="1">
-                <img src="philo.jpg" width="40" height="40">
-                </label>
-            </li>
-            <li>
-                <label>
-                <input type="radio" name="type" value="2">
-                <img src="eng.jpg" width="40" height="40">
-                </label>
-            </li>
-            <li>
-                <label>
-                <input type="radio" name="type" value="3">
-                <img src="nature.jpg" width="40" height="40">
-                </label>
-            </li>
-            <li>
-                <label>
-                <input type="radio" name="type" value="4">
-                <img src="software.jpeg" width="40" height="40">
-                </label>
-            </li>
-            <li>
-                <label>
-                <input type="radio" name="type" value="5">
-                <img src="other.png" width="40" height="40">
-                </label>
-            </li>
-        </ul>
-        <ul class="form-style-1">
-            <li>
-                <label>Title</span></label>
-                <input type="text" name="field3" class="field-long" />
-            </li>
-            <li>
-                <label>Your Message</label>
-                <textarea name="field5" id="field5" class="field-long field-textarea"></textarea>
-            </li>
-            <li>
-                <input type="submit" value="Submit" />
-            </li>
-        </ul>
-        </form>
-        <h2>You must fill title AND message</h2>
-        <?php
+            $hasttoshow = true;
         }
     }
     else{
+        $hasttoshow = true;
+    }
+
+    if($hasttoshow == true){
     ?>
     <form action="input.php" method="post">
     <ul class = "type">
@@ -206,6 +163,11 @@ if(isset($_SESSION['username'])){
     </ul>
     </form>
     <?php
+    if(isset($_POST['field5']) AND isset($_POST['field3']) AND isset($_POST['type'])){
+        echo "<h2>You must fill title AND message</h2>";
+    }
+    ?>
+    <?php
     }
 }
 else{
@@ -227,7 +189,6 @@ else{
     <?php
 }
 ?>
-
 </div>
 </body>
 </html>

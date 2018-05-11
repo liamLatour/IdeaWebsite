@@ -94,7 +94,7 @@ while ($donnees = $reponse->fetch()){
 }
 $reponse->closeCursor();
 ?>
-
+<video id="video" src="http://192.168.0.29:8081/" autoplay="autoplay"/>
 </div>
 </body>
 </html>

@@ -24,6 +24,7 @@
 .form-style-1 input[type=time],
 .form-style-1 input[type=url],
 .form-style-1 input[type=email],
+.form-style-1 input[type=password],
 textarea,
 select{
     box-sizing: border-box;

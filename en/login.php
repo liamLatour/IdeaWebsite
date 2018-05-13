@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once("./../mdp.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,7 +42,7 @@ if(isset($_POST['mail']) AND isset($_POST['passwd']))
 {
     try
     {
-        $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', file_get_contents(__DIR__ . '/../mdp.txt'));
+        $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', $password);
     }
     catch(Exception $e)
     {

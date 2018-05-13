@@ -1,9 +1,10 @@
 <?php
 session_start();
+require_once("./../mdp.php");
 
 try
 {
-    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', file_get_contents(__DIR__ . '/../mdp.txt'));
+    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', $password);
 }
 catch(Exception $e)
 {

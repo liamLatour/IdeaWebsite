@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once("./../mdp.php");
 
 if(isset($_SESSION['username'])){
     if(isset($_POST['field5']) AND isset($_POST['field3']) AND isset($_POST['type']))
@@ -7,7 +8,7 @@ if(isset($_SESSION['username'])){
         if(trim($_POST['field5']) != "" AND trim($_POST['field3']) != ""){
             try
             {
-                $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', file_get_contents(__DIR__ . '/../mdp.txt'));
+                $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', $password);
             }
             catch(Exception $e)
             {

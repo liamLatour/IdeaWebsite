@@ -3,15 +3,13 @@ session_start();
 
 try
 {
-    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', file_get_contents("/opt/lampp/htdocs/tests/mdp.txt"));
+    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', file_get_contents(__DIR__ . '/../mdp.txt'));
 }
 catch(Exception $e)
 {
         die('Erreur : '.$e->getMessage());
 }
-//
-//Cant like if not connected
-//
+
 if(isset($_POST['like'])){
     if(isset($_SESSION['id'])){
         $verif = $bdd->prepare('SELECT * FROM liked WHERE user=:user AND idea=:idea');
@@ -38,14 +36,42 @@ if(isset($_POST['like'])){
         echo '<script type="text/javascript">window.alert("You have to be connected");</script>';
     }
 }
+
+$main = $bdd->prepare('SELECT * FROM news WHERE id=:id');
+$main->execute(array('id' => $_GET['id']));
+$retrive = $main->fetch();
+
+$hastoshow = false;
+
+if(isset($_SESSION['username'])){
+    if(isset($_POST['msg']))
+    {
+        if(trim($_POST['msg']) != ""){
+            $req = $bdd->prepare('INSERT INTO news(titre, contenu, owner, categorie, parent) VALUES(:titre, :contenu, :owner, :categorie, :parent)');
+            $req->execute(array(
+                'titre' => '',
+                'contenu' => $_POST['msg'],
+                'owner' => $_SESSION['username'],
+                'categorie' => $retrive['categorie'],
+                'parent' => $_GET['id']
+                ));
+        }
+        else{
+            $hastoshow = true;
+        }
+    }
+    else{
+        $hastoshow = true;
+    }
+}
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8"/>
-    <link rel="stylesheet" type="text/css" href="/tests/color.css">
-    <link rel="stylesheet" type="text/css" href="/tests/info.css">
+    <link rel="stylesheet" type="text/css" href="./../color.css">
+    <link rel="stylesheet" type="text/css" href="./../info.css">
     <title>Une idée?</title>
     <style>
     h2{
@@ -147,9 +173,6 @@ include("menu.php");
 <div class="content" align="center">
 
 <?php
-$main = $bdd->prepare('SELECT * FROM news WHERE id=:id');
-$main->execute(array('id' => $_GET['id']));
-$retrive = $main->fetch();
 
 if($retrive['titre']==''){
     ?>
@@ -170,18 +193,20 @@ else{
 ?>
 <div class="idea">
     <table border=0 style="table-layout: fixed; width:100%">
-        <td>By: <?php echo htmlspecialchars($retrive['owner']);?></td>
+        <td>
+            <a href="users.php?id=<?php echo $retrive['owner'];?>">By: <?php echo htmlspecialchars($retrive['owner']);?></a>
+        </td>
         <td class="title"><?php echo htmlspecialchars($retrive['titre']); ?></td>
         <td><?php echo htmlspecialchars($retrive['date']); ?></td>
     </table>
     <p>
-        <?php echo htmlspecialchars($retrive['contenu']); ?>
+        <?php echo nl2br(htmlspecialchars($retrive['contenu'])); ?>
     </p>
     Likes: <?php echo $retrive['likes'] ?>
     <form action="Idea.php?id=<?php echo $_GET['id'] ?>" method="POST">
         <label>
         <input type="submit" name="like" value="<?php echo $_GET['id'] ?>">
-        <img src="/tests/like.png" width="40" height="40" alt="Like" >
+        <img src="./../like.png" width="40" height="40" alt="Like" >
         </label>
     </form>
 </div>
@@ -196,17 +221,19 @@ while ($donnees = $reponse->fetch()){
 ?>
     <div class="response">
         <table border=0 style="table-layout: fixed; width:100%">
-            <td>'<?php echo htmlspecialchars($donnees['owner']);?>' replied</td>
+            <td>
+                <a href="users.php?id=<?php echo $donnees['owner'];?>">'<?php echo htmlspecialchars($donnees['owner']);?>' replied</a>
+            </td>
             <td><?php echo htmlspecialchars($donnees['date']); ?></td>
         </table>
         <p>
-            <?php echo htmlspecialchars($donnees['contenu']); ?>
+            <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
         </p>
         Likes: <?php echo $donnees['likes'] ?>
         <form action="Idea.php?id=<?php echo $_GET['id'] ?>" method="POST">
         <label>
             <input type="submit" name="like" value="<?php echo $donnees['id'] ?>">
-            <img src="like.png" width="40" height="40" alt="Like" >
+            <img src="./../like.png" width="40" height="40" alt="Like" >
         </label>
     </form>
     </div>
@@ -218,49 +245,7 @@ $reponse->closeCursor();
 <!--Comment section-->
 <?php
 if(isset($_SESSION['username'])){
-    if(isset($_POST['msg']))
-    {
-        if(trim($_POST['msg']) != ""){
-            $req = $bdd->prepare('INSERT INTO news(titre, contenu, owner, categorie, parent) VALUES(:titre, :contenu, :owner, :categorie, :parent)');
-            $req->execute(array(
-                'titre' => '',
-                'contenu' => $_POST['msg'],
-                'owner' => $_SESSION['username'],
-                'categorie' => $retrive['categorie'],
-                'parent' => $_GET['id']
-                ));
-            ?>
-            <style>
-            .content{
-                position: absolute;
-                top: 25%;
-                left: 0;
-                right: 0;
-            }
-            </style>
-            <div class="glob">
-            <h1>Your reply has been set !</h1>
-            </div>
-            <?php
-        }
-        else{
-        ?>
-        <h2>You must fill the reply</h2>
-        <form action="Idea.php?id=<?php echo $_GET['id'] ?>" method="post">
-        <ul class="form-style-1">
-            <li>
-                <label>Reply</label>
-                <textarea name="msg" id="msg" class="field-long field-textarea"></textarea>
-            </li>
-            <li>
-                <input type="submit" value="Submit" />
-            </li>
-        </ul>
-        </form>
-        <?php
-        }
-    }
-    else{
+    if($hastoshow == true){
     ?>
     <form action="Idea.php?id=<?php echo $_GET['id'] ?>" method="post">
     <ul class="form-style-1">
@@ -288,8 +273,6 @@ else{
 }
 }
 ?>
-
-
 </div>
 </body>
 </html>

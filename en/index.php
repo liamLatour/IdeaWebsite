@@ -2,11 +2,10 @@
 session_start();
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="/tests/color.css">
+    <link rel="stylesheet" type="text/css" href="./../color.css">
     <title>Une idée?</title>
     <style>
     a.button {
@@ -73,7 +72,7 @@ include("menu.php");
 <?php
 try
 {
-    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', file_get_contents("/opt/lampp/htdocs/tests/mdp.txt"));
+    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', file_get_contents(__DIR__ . '/../mdp.txt'));
 }
 catch(Exception $e)
 {
@@ -94,7 +93,7 @@ while ($donnees = $reponse->fetch()){
             <td class="td"><?php echo htmlspecialchars($donnees['date']); ?></td>
         </table>
         <p>
-            <?php echo htmlspecialchars($donnees['contenu']); ?>
+            <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
         </p>
         <h7>
         Replies: <?php echo $replies->fetchColumn() ?> ---- Likes: <?php echo $donnees['likes'] ?>

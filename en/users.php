@@ -85,66 +85,21 @@ catch(Exception $e)
     die('Erreur : '.$e->getMessage());
 }
 
-if(isset($_POST['del'])){
-    $owned = $bdd->prepare('SELECT * FROM news WHERE owner=:owner AND id=:id');
-    $owned->execute(array('owner' => $_SESSION['username'], 'id' => $_POST['del']));
-    if($owned->rowCount() > 0){
-        $del = $bdd->prepare('DELETE FROM news WHERE id=:id OR parent=:id');
-        $del->execute(array('id' => $_POST['del']));
-    }
-}
-
-if(isset($_POST['logout'])){
-    session_destroy();
-    ?>
-    <style>
-    .content{
-        position: absolute;
-        top: 25%;
-        left: 0;
-        right: 0;
-    }
-    </style>
-    <div class="glob">
-        <h1>Log out succesfull</h1>
-    </div>
-    <?php
-}
-elseif(!isset($_SESSION['username'])){
-    ?>
-    <style>
-    .content{
-        position: absolute;
-        top: 25%;
-        left: 0;
-        right: 0;
-    }
-    </style>
-    <div class="glob">
-        <h1>Already logged out</h1>
-    </div>
-    <?php
-}
-else{
+$user = $bdd->prepare('SELECT * FROM users WHERE username=:id');
+$user->execute(array('id' => $_GET['id']));
+$data = $user->fetch();
 ?>
 <div class="glob">
-    <h1>Loged in as: <?php echo $_SESSION['username'] ?></h1>
-</div>
-<div class="loged">
-    <h2>Your email: <?php echo $_SESSION['mail'] ?></h2>
-    <h2>Your password: <?php echo $_SESSION['password'] ?></h2>
-    <form action="account.php" method="post">
-        <input type="submit" name="logout" value="Log out">
-    </form>
+    <h1>Profile of: <?php echo $data['username'] ?></h1>
 </div>
 <div>
     <?php
     $reponse = $bdd->prepare('SELECT * FROM news WHERE owner=:owner ORDER BY id DESC');
-    $reponse->execute(array('owner' => $_SESSION['username']));
+    $reponse->execute(array('owner' => $data['username']));
 
     if($reponse->rowCount() > 0){
         ?>
-        <h2>Your posts</h2>
+        <h2><?php echo $data['username'] ?>'s posts</h2>
         <?php
         while ($donnees = $reponse->fetch())
         {
@@ -158,12 +113,6 @@ else{
                     <p>
                         <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
                     </p>
-                    <form action="account.php" method="post" onSubmit="return confirm('Are you sure you want to proceed?');">
-                        <button name="del" value="<?php echo $donnees['id'] ?>">Delete</button>
-                    </form>
-                    <form action="modify.php" method="post">
-                        <button name="mod" value="<?php echo $donnees['id'] ?>">Modify</button>
-                    </form>
                 </div>
             <?php
             }
@@ -180,15 +129,7 @@ else{
                 </table>
                 <table border=0 style="table-layout: fixed; width:100%" id="core">
                     <td width="120px">
-                        Replies: <?php echo $replies->fetchColumn() ?>
-
-                        <form action="account.php" method="post" onSubmit="return confirm('Are you sure you want to proceed?');">
-                            <button name="del" value="<?php echo $donnees['id'] ?>">Delete</button>
-                        </form>
-                        <form action="modify.php" method="post">
-                            <button name="mod" value="<?php echo $donnees['id'] ?>">Modify</button>
-                        </form>
-                        
+                        Replies: <?php echo $replies->fetchColumn() ?>                        
                     </td>
                     <td>
                         <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
@@ -209,14 +150,11 @@ else{
     }
     else{
         ?>
-        <h2>You have not posted anything yet</h2>
+        <h2><?php echo $data['username'] ?> has not posted anything yet</h2>
         <?php
     }
     ?>
 </div>
-<?php
-}
-?>
 </div>
 </body>
 </html>

@@ -63,6 +63,14 @@ include("menu.php");
 }
 </style>
 
+
+
+<script>
+    alert("Cette langue n'a pas encore été mis à jour...");
+</script>
+
+
+
 <!--Input-->
 <div class="content" align="center">
 <div class="postidea">

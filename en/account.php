@@ -1,6 +1,23 @@
 <?php
 session_start();
 require_once("./../mdp.php");
+
+try
+{
+    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', $password);
+}
+catch(Exception $e)
+{
+    die('Erreur : '.$e->getMessage());
+}
+
+if(isset($_POST['pass'])){
+    $req = $bdd->prepare('UPDATE users SET password=:pass WHERE id=:id');
+    $req->execute(array(
+        'pass' => password_hash($_POST['pass'], PASSWORD_DEFAULT),
+        'id' => $_SESSION['id']
+        ));
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,15 +28,25 @@ require_once("./../mdp.php");
     <title>Une idée?</title>
     <style>
     .glob{
-        padding: 40px;
+        padding: 1%;
         background-color: rgb(190,190,190);
         margin: 0px;
     }
     .loged{
         margin: 0px;
-        padding: 60px;
+        padding: 1%;
         background-color: rgb(180,180,180);
     }
+
+    @media screen and (max-width: 600px) {
+        .glob {
+            font-size: 10px;
+        }
+        .loged{
+            font-size: 9px;
+        }
+    }
+
     a{
         text-decoration: none;
         color: black;
@@ -53,10 +80,6 @@ require_once("./../mdp.php");
         background-color: rgb(210,210,210);
         padding: auto;
     }
-    p{
-        padding: 20px;
-        margin: auto;
-    }
     .comment {
         background-color: rgb(150, 150, 150);
         padding: 5px;
@@ -65,6 +88,99 @@ require_once("./../mdp.php");
         text-align: center;
 
     }
+    button{
+        background: none;
+        color: inherit;
+        border: none;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+        outline: inherit;
+    }
+
+
+        /* The Modal (background) */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        padding-top: 60px;
+    }
+
+    /* Modal Content/Box */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5px auto; /* 15% from the top and centered */
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+    }
+
+    /* The Close Button */
+    .close {
+        /* Position it in the top right corner outside of the modal */
+        position: absolute;
+        right: 25px;
+        top: 0;
+        color: #000;
+        font-size: 35px;
+        font-weight: bold;
+    }
+
+    /* Close button on hover */
+    .close:hover,
+    .close:focus {
+        color: red;
+        cursor: pointer;
+    }
+    .container{
+        padding: 20px;
+    }
+
+    input[type=password]{
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        border:1px solid #BEBEBE;
+        padding: 7px;
+        margin:0px;
+        -webkit-transition: all 0.30s ease-in-out;
+        -moz-transition: all 0.30s ease-in-out;
+        -ms-transition: all 0.30s ease-in-out;
+        -o-transition: all 0.30s ease-in-out;
+        outline: none; 
+    }
+
+    input[type=submit],
+    button[type=submit]{
+        background: #4B99AD;
+        padding: 8px 15px 8px 15px;
+        border: none;
+        color: #fff;
+        margin-top: 10px;
+    }
+
+    /* Add Zoom Animation */
+    .animate {
+        -webkit-animation: animatezoom 0.6s;
+        animation: animatezoom 0.6s
+    }
+
+    @-webkit-keyframes animatezoom {
+        from {-webkit-transform: scale(0)}
+        to {-webkit-transform: scale(1)}
+    }
+
+    @keyframes animatezoom {
+        from {transform: scale(0)}
+        to {transform: scale(1)}
+    } 
     </style>
 </head>
 <body>
@@ -76,16 +192,32 @@ include("menu.php");
 
 <!--Input-->
 <div class="content" align="center">
-<?php
-try
-{
-    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', $password);
-}
-catch(Exception $e)
-{
-    die('Erreur : '.$e->getMessage());
-}
 
+
+<!-- The Modal -->
+<div id="id01" class="modal">
+  <span onclick="document.getElementById('id01').style.display='none'"
+class="close" title="Close Modal">&times;</span>
+
+  <!-- Modal Content -->
+  <form class="modal-content animate" action="account.php" method="post">
+
+    <div class="container">
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="pass" required>
+
+      <button type="submit">Modify</button>
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+    </div>
+  </form>
+</div>
+
+
+
+<?php
 if(isset($_POST['del'])){
     $owned = $bdd->prepare('SELECT * FROM news WHERE owner=:owner AND id=:id');
     $owned->execute(array('owner' => $_SESSION['username'], 'id' => $_POST['del']));
@@ -133,11 +265,12 @@ else{
 </div>
 <div class="loged">
     <h2>Your email: <?php echo $_SESSION['mail'] ?></h2>
-    <h2>Your password: <?php echo $_SESSION['password'] ?></h2>
+    <button onclick="document.getElementById('id01').style.display='block'"><h2>Change password</h2></button>
     <form action="account.php" method="post">
         <input type="submit" name="logout" value="Log out">
     </form>
 </div>
+
 <div id="answers">
     <?php
     $reponse = $bdd->prepare('SELECT * FROM news WHERE owner=:owner ORDER BY id DESC');
@@ -160,10 +293,10 @@ else{
                         <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
                     </p>
                     <form action="account.php#answers" method="post" onSubmit="return confirm('Are you sure you want to proceed?');">
-                        <button name="del" value="<?php echo $donnees['id'] ?>">Delete</button>
+                        <button type="submit" name="del" value="<?php echo $donnees['id'] ?>">Delete</button>
                     </form>
                     <form action="modify.php" method="post">
-                        <button name="mod" value="<?php echo $donnees['id'] ?>">Modify</button>
+                        <button type="submit" name="mod" value="<?php echo $donnees['id'] ?>">Modify</button>
                     </form>
                 </div>
             <?php
@@ -184,10 +317,10 @@ else{
                         Replies: <?php echo $replies->fetchColumn() ?>
 
                         <form action="account.php" method="post" onSubmit="return confirm('Are you sure you want to proceed?');">
-                            <button name="del" value="<?php echo $donnees['id'] ?>">Delete</button>
+                            <button type="submit" name="del" value="<?php echo $donnees['id'] ?>">Delete</button>
                         </form>
                         <form action="modify.php" method="post">
-                            <button name="mod" value="<?php echo $donnees['id'] ?>">Modify</button>
+                            <button type="submit" name="mod" value="<?php echo $donnees['id'] ?>">Modify</button>
                         </form>
                         
                     </td>

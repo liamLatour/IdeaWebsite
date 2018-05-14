@@ -92,6 +92,35 @@ $data = $user->fetch();
 ?>
 <div class="glob">
     <h1>Profile of: <?php echo $data['username'] ?></h1>
+    <h2>Points: <?php echo $data['points'] ?></h2>
+    <?php
+    switch ($data['points']){
+        case $data['points'] > 35:
+            echo "<h2>génie</h2>";
+            break;
+        case $data['points'] > 30:
+            echo "<h2>homme de science</h2>";
+            break;
+        case $data['points'] > 25:
+            echo "<h2>concepteur</h2>";
+            break;
+        case $data['points'] > 20:
+            echo "<h2>penseur</h2>";
+            break;
+        case $data['points'] > 15:
+            echo "<h2>aviseur</h2>";
+            break;
+        case $data['points'] > 10:
+            echo "<h2>songeur</h2>";
+            break;
+        case $data['points'] > 5:
+            echo "<h2>rêveur</h2>";
+            break;
+        default:
+            echo "<h2>nouveau</h2>";
+            break;
+    }
+    ?>
 </div>
 <div>
     <?php

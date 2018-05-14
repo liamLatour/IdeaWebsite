@@ -20,14 +20,27 @@ if(isset($_POST['like'])){
             ));
 
         if($verif->rowCount() == 0){
-            $main = $bdd->prepare('UPDATE news SET likes=likes+1 WHERE id=:id');
-            $main->execute(array('id' => $_POST['like']));
 
-            $unable = $bdd->prepare('INSERT INTO liked(user, idea) VALUES(:user, :idea)');
-            $unable->execute(array(
-                'user' => $_SESSION['id'],
-                'idea' => $_POST['like']
-                ));
+            $owner = $bdd->prepare('SELECT owner FROM news WHERE id=:id');
+            $owner->execute(array('id' => $_POST['like']));
+            $trueown = $owner->fetch()['owner'];
+
+            if($trueown != $_SESSION['username']){
+                $reputation = $bdd->prepare('UPDATE users SET points=points+1 WHERE username=:id');
+                $reputation->execute(array('id' => $trueown));
+
+                $main = $bdd->prepare('UPDATE news SET likes=likes+1 WHERE id=:id');
+                $main->execute(array('id' => $_POST['like']));
+
+                $unable = $bdd->prepare('INSERT INTO liked(user, idea) VALUES(:user, :idea)');
+                $unable->execute(array(
+                    'user' => $_SESSION['id'],
+                    'idea' => $_POST['like']
+                    ));
+            }
+            else{
+                echo '<script type="text/javascript">window.alert("You can not like your own post");</script>';
+            }
         }
         else{
             echo '<script type="text/javascript">window.alert("You already liked this !");</script>';
@@ -48,6 +61,16 @@ if(isset($_SESSION['username'])){
     if(isset($_POST['msg']))
     {
         if(trim($_POST['msg']) != ""){
+
+            $owner = $bdd->prepare('SELECT owner FROM news WHERE id=:id');
+            $owner->execute(array('id' => $_GET['id']));
+            $trueown = $owner->fetch()['owner'];
+
+            if($trueown != $_SESSION['username']){
+                $reputation = $bdd->prepare('UPDATE users SET points=points+2 WHERE username=:id');
+                $reputation->execute(array('id' => $trueown));
+            }
+
             $req = $bdd->prepare('INSERT INTO news(titre, contenu, owner, categorie, parent) VALUES(:titre, :contenu, :owner, :categorie, :parent)');
             $req->execute(array(
                 'titre' => '',

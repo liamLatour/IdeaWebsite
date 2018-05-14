@@ -99,12 +99,12 @@ figcaption {
 $activate = '3';
 include("menu.php"); 
 ?>
-
+<!--
 <style>
 .content{
     margin-top: 0px;
 }
-</style>
+</style>-->
 
 <!--
 Had some kind of categories:

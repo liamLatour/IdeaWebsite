@@ -10,7 +10,6 @@
         margin: 0;
         padding: 0;
         background-color: rgb(200, 200, 200);
-        height: 100%; 
         position: fixed; 
         overflow: auto;
     }
@@ -143,7 +142,7 @@
         }
         ?>
 
-        <li class="next"><a href="/tests/fr/index.php">FR</a></li>
+        <li class="next"><a href="./../fr/index.php">FR</a></li>
         <li class="minus"><a href="#" onclick="hide();return false;">▴</a></li>
     </div>
 

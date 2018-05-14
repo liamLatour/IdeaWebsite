@@ -138,7 +138,7 @@ else{
         <input type="submit" name="logout" value="Log out">
     </form>
 </div>
-<div>
+<div id="answers">
     <?php
     $reponse = $bdd->prepare('SELECT * FROM news WHERE owner=:owner ORDER BY id DESC');
     $reponse->execute(array('owner' => $_SESSION['username']));
@@ -159,7 +159,7 @@ else{
                     <p>
                         <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
                     </p>
-                    <form action="account.php" method="post" onSubmit="return confirm('Are you sure you want to proceed?');">
+                    <form action="account.php#answers" method="post" onSubmit="return confirm('Are you sure you want to proceed?');">
                         <button name="del" value="<?php echo $donnees['id'] ?>">Delete</button>
                     </form>
                     <form action="modify.php" method="post">

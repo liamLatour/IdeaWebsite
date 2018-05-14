@@ -1,6 +1,45 @@
 <?php
 session_start();
 require_once("./../mdp.php");
+
+$astoshow = false;
+if(isset($_POST['mail']) AND isset($_POST['passwd']))
+{
+    try
+    {
+        $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', $password);
+    }
+    catch(Exception $e)
+    {
+        die('Erreur : '.$e->getMessage());
+    }
+
+    $verif = $bdd->prepare("SELECT * FROM users WHERE email = :mail");
+    $verif->execute(array('mail' => $_POST['mail']));
+    $donnees = $verif->fetch();
+
+    $olo = password_verify(trim($_POST['passwd']), $donnees['password']);
+
+    if($olo){
+        $_SESSION['username'] = $donnees['username'];
+        $_SESSION['mail'] = $donnees['email'];
+        $_SESSION['password'] = trim($_POST['passwd']);
+        $_SESSION['id'] = $donnees['id'];
+        
+        header('Location: account.php');
+    }
+    else{
+        ?>
+        <div class="failed">
+            <h1>Wrong credentials...</h1>
+        </div>
+        <?php
+        $astoshow = true;
+    }
+}
+else{
+    $astoshow = true;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,59 +76,6 @@ include("menu.php");
 <!--Input-->
 <div class="content" align="center">
 <?php
-$astoshow = false;
-if(isset($_POST['mail']) AND isset($_POST['passwd']))
-{
-    try
-    {
-        $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', $password);
-    }
-    catch(Exception $e)
-    {
-        die('Erreur : '.$e->getMessage());
-    }
-
-    $verif = $bdd->prepare("SELECT * FROM users WHERE email = :mail");
-    $verif->execute(array('mail' => $_POST['mail']));
-    $donnees = $verif->fetch();
-
-    $olo = password_verify(trim($_POST['passwd']), $donnees['password']);
-
-    if($olo){
-        $_SESSION['username'] = $donnees['username'];
-        $_SESSION['mail'] = $donnees['email'];
-        $_SESSION['password'] = trim($_POST['passwd']);
-        $_SESSION['id'] = $donnees['id'];
-        ?>
-        <style>
-        .content{
-            position: absolute;
-            top: 25%;
-            left: 0;
-            right: 0;
-        }
-        </style>
-        <div class="glob">
-            <h1>Logged in succesful !!!!</h1>
-        </div>
-        <div class="loged">
-            <h2>Welcome back <?php echo $_SESSION['username'] ?> !</h2>
-        </div>
-        <?php
-    }
-    else{
-        ?>
-        <div class="failed">
-            <h1>Wrong credentials...</h1>
-        </div>
-        <?php
-        $astoshow = true;
-    }
-}
-else{
-    $astoshow = true;
-}
-
 if (isset($_SESSION['username']) AND !isset($_POST['mail'])){
     ?>
     <style>

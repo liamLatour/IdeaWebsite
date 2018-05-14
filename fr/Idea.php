@@ -1,9 +1,10 @@
 <?php
 session_start();
+require_once("./../mdp.php");
 
 try
 {
-    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', file_get_contents("/opt/lampp/htdocs/tests/mdp.txt"));
+    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', $password);
 }
 catch(Exception $e)
 {
@@ -44,8 +45,8 @@ if(isset($_POST['like'])){
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8"/>
-    <link rel="stylesheet" type="text/css" href="/tests/color.css">
-    <link rel="stylesheet" type="text/css" href="/tests/info.css">
+    <link rel="stylesheet" type="text/css" href="./../color.css">
+    <link rel="stylesheet" type="text/css" href="./../info.css">
     <title>Une idée?</title>
     <style>
     h2{
@@ -181,7 +182,7 @@ else{
     <form action="Idea.php?id=<?php echo $_GET['id'] ?>" method="POST">
         <label>
         <input type="submit" name="like" value="<?php echo $_GET['id'] ?>">
-        <img src="/tests/like.png" width="40" height="40" alt="Like" >
+        <img src="./../like.png" width="40" height="40" alt="Like" >
         </label>
     </form>
 </div>

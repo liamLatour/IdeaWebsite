@@ -85,7 +85,7 @@
     <?php
     }
     ?>
-    <li><a href="/tests/en/index.php">EN</a></li>
+    <li><a href="./../en/index.php">EN</a></li>
     </div>
 </ul>
 </div>

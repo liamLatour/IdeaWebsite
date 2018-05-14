@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once("./../mdp.php");
 ?>
 <!DOCTYPE html>
 <html>
@@ -93,7 +94,7 @@ if(isset($_POST['usname']) AND isset($_POST['mail']) AND isset($_POST['passwd'])
 {
     try
     {
-        $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', file_get_contents("/opt/lampp/htdocs/tests/mdp.txt"));
+        $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', $password);
     }
     catch(Exception $e)
     {

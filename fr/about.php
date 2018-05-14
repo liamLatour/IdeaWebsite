@@ -1,12 +1,13 @@
 <?php
 session_start();
+require_once("./../mdp.php");
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8" />
-<link rel="stylesheet" type="text/css" href="/tests/info.css">
+<link rel="stylesheet" type="text/css" href="./../info.css">
 <title>Une idée?</title>
 <style>
 div.content a{

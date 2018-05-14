@@ -1,12 +1,13 @@
 <?php
 session_start();
+require_once("./../mdp.php");
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="/tests/color.css">
+    <link rel="stylesheet" type="text/css" href="./../color.css">
     <title>Une idée?</title>
     <style>
     a{
@@ -40,7 +41,7 @@ include("menu.php");
 <?php
 try
 {
-    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', file_get_contents("/opt/lampp/htdocs/tests/mdp.txt"));
+    $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', $password);
 }
 catch(Exception $e)
 {

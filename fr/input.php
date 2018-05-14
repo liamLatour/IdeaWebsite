@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once("./../mdp.php");
 
 if(isset($_SESSION['username'])){
     if(isset($_POST['field5']) AND isset($_POST['field3']) AND isset($_POST['type']))
@@ -7,7 +8,7 @@ if(isset($_SESSION['username'])){
         if(trim($_POST['field5']) != "" AND trim($_POST['field3']) != ""){
             try
             {
-                $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', file_get_contents("/opt/lampp/htdocs/tests/mdp.txt"));
+                $bdd = new PDO('mysql:host=localhost;dbname=test;charset=utf8', 'root', $password);
             }
             catch(Exception $e)
             {
@@ -39,7 +40,7 @@ if(isset($_SESSION['username'])){
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta charset="utf-8" />
-<link rel="stylesheet" type="text/css" href="/tests/info.css">
+<link rel="stylesheet" type="text/css" href="./../info.css">
 <title>Une idée?</title>
 <style type="text/css">
 a{
@@ -127,7 +128,7 @@ if(isset($_SESSION['username'])){
             <figure>
             <label>
             <input type="radio" name="type" value="1">
-            <img src="/tests/philo.jpg" width="40" height="40" alt="Philosophie">
+            <img src="./../philo.jpg" width="40" height="40" alt="Philosophie">
             </label>
             <figcaption>Philosophie</figcaption>
             </figure>
@@ -136,7 +137,7 @@ if(isset($_SESSION['username'])){
             <figure>
             <label>
             <input type="radio" name="type" value="2">
-            <img src="/tests/eng.jpg" width="40" height="40" alt="Ingénierie">
+            <img src="./../eng.jpg" width="40" height="40" alt="Ingénierie">
             </label>
             <figcaption>Ingénierie</figcaption>
             </figure>
@@ -145,7 +146,7 @@ if(isset($_SESSION['username'])){
             <figure>
             <label>
             <input type="radio" name="type" value="3">
-            <img src="/tests/nature.jpg" width="40" height="40" alt="Nature">
+            <img src="./../nature.jpg" width="40" height="40" alt="Nature">
             </label>
             <figcaption>Nature</figcaption>
             </figure>
@@ -154,7 +155,7 @@ if(isset($_SESSION['username'])){
             <figure>
             <label>
             <input type="radio" name="type" value="4">
-            <img src="/tests/software.jpeg" width="40" height="40" alt="Software">
+            <img src="./../software.jpeg" width="40" height="40" alt="Software">
             </label>
             <figcaption>Software</figcaption>
             </figure>
@@ -163,7 +164,7 @@ if(isset($_SESSION['username'])){
             <figure>
             <label>
             <input type="radio" name="type" value="5">
-            <img src="/tests/other.png" width="40" height="40" alt="Autre">
+            <img src="./../other.png" width="40" height="40" alt="Autre">
             </label>
             <figcaption>Autre</figcaption>
             </figure>

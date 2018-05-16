@@ -8,6 +8,7 @@ require_once("./../mdp.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="./../color.css">
+    <link rel="stylesheet" type="text/css" href="./../reset.css">
     <title>Une idée?</title>
     <style>
     .glob{
@@ -95,25 +96,28 @@ $data = $user->fetch();
     <h2>Points: <?php echo $data['points'] ?></h2>
     <?php
     switch ($data['points']){
-        case $data['points'] > 35:
+        case $data['points'] = 0:
+            echo "<h2>nouveau</h2>";
+            break;
+        case $data['points'] > 500:
             echo "<h2>génie</h2>";
             break;
-        case $data['points'] > 30:
+        case $data['points'] > 400:
             echo "<h2>homme de science</h2>";
             break;
-        case $data['points'] > 25:
+        case $data['points'] > 300:
             echo "<h2>concepteur</h2>";
             break;
-        case $data['points'] > 20:
+        case $data['points'] > 250:
             echo "<h2>penseur</h2>";
             break;
-        case $data['points'] > 15:
+        case $data['points'] > 100:
             echo "<h2>aviseur</h2>";
             break;
-        case $data['points'] > 10:
+        case $data['points'] > 50:
             echo "<h2>songeur</h2>";
             break;
-        case $data['points'] > 5:
+        case $data['points'] > 20:
             echo "<h2>rêveur</h2>";
             break;
         default:
@@ -141,7 +145,10 @@ $data = $user->fetch();
                         <td><?php echo htmlspecialchars($donnees['date']); ?></td>
                     </table>
                     <p>
-                        <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
+                    <?php
+                        $output = $donnees['contenu'];
+                        include("./../beautiful.php");
+                    ?>
                     </p>
                 </div>
             <?php
@@ -162,7 +169,10 @@ $data = $user->fetch();
                         Replies: <?php echo $replies->fetchColumn() ?>                        
                     </td>
                     <td>
-                        <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
+                    <?php
+                        $output = $donnees['contenu'];
+                        include("./../beautiful.php");
+                    ?>
                     </td>
                     <td width="10px">
 

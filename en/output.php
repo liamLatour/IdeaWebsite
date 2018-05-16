@@ -1,6 +1,13 @@
 <?php
 session_start();
 require_once("./../mdp.php");
+
+if (isset($_GET['disp']) AND $_GET['disp'] != ''){
+    $f = ($_GET['disp']-1) * 10;
+}
+else{
+    $f = 0;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,6 +15,7 @@ require_once("./../mdp.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="./../color.css">
+    <link rel="stylesheet" type="text/css" href="./../reset.css">
     <title>Une idée?</title>
     <style>
     a{
@@ -53,6 +61,15 @@ require_once("./../mdp.php");
     .submenu{
         text-align: center;
     }
+
+    .naviguate{
+        background-color: rgb(200,200,200);
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        margin: 20px;
+    }
     </style>
 </head>
 <body>
@@ -79,6 +96,7 @@ else{
         <li><a href="output.php?cat=eng" <?php if ($cat == 'eng'){echo 'class="active"';} ?>>Engineering</a></li>
         <li><a href="output.php?cat=oth" <?php if ($cat == 'oth'){echo 'class="active"';} ?>>Other</a></li>
         <li><a href="output.php?cat=lik" <?php if ($cat == 'lik'){echo 'class="active"';} ?>>Liked</a></li>
+        <li><a href="output.php?cat=rep" <?php if ($cat == 'rep'){echo 'class="active"';} ?>>Replied</a></li>
     </ul>
 </div>
 
@@ -98,43 +116,66 @@ if(isset($_GET['cat'])){
         ?>
 <h1>Ideas about philosophy</h1>
         <?php
-            $reponse = $bdd->query('SELECT * FROM news WHERE parent=0 AND categorie=1 ORDER BY id DESC');
+            $reponse = $bdd->prepare('SELECT * FROM news WHERE parent=0 AND categorie=1 ORDER BY id DESC LIMIT :f, 10');
+            $reponse->bindValue(':f', $f, PDO::PARAM_INT);
+            $reponse->execute();
             break;
         case "soft":
         ?>
 <h1>Ideas about software</h1>
         <?php
-            $reponse = $bdd->query('SELECT * FROM news WHERE parent=0 AND categorie=4 ORDER BY id DESC');
+            $reponse = $bdd->prepare('SELECT * FROM news WHERE parent=0 AND categorie=4 ORDER BY id DESC LIMIT :f, 10');
+            $reponse->bindValue(':f', $f, PDO::PARAM_INT);
+            $reponse->execute();
             break;
         case "nat":
         ?>
 <h1>Ideas about nature</h1>
         <?php
-            $reponse = $bdd->query('SELECT * FROM news WHERE parent=0 AND categorie=3 ORDER BY id DESC');
+            $reponse = $bdd->prepare('SELECT * FROM news WHERE parent=0 AND categorie=3 ORDER BY id DESC LIMIT :f, 10');
+            $reponse->bindValue(':f', $f, PDO::PARAM_INT);
+            $reponse->execute();
             break;
         case "eng":
         ?>
 <h1>Ideas about engineering</h1>
         <?php
-            $reponse = $bdd->query('SELECT * FROM news WHERE parent=0 AND categorie=2 ORDER BY id DESC');
+            $reponse = $bdd->prepare('SELECT * FROM news WHERE parent=0 AND categorie=2 ORDER BY id DESC LIMIT :f, 10');
+            $reponse->bindValue(':f', $f, PDO::PARAM_INT);
+            $reponse->execute();
             break;
         case "oth":
         ?>
 <h1>Ideas about other things</h1>
         <?php
-            $reponse = $bdd->query('SELECT * FROM news WHERE parent=0 AND categorie=5 ORDER BY id DESC');
+            $reponse = $bdd->prepare('SELECT * FROM news WHERE parent=0 AND categorie=5 ORDER BY id DESC LIMIT :f, 10');
+            $reponse->bindValue(':f', $f, PDO::PARAM_INT);
+            $reponse->execute();
             break;
         case "lik":
         ?>
 <h1>Most liked ideas</h1>
         <?php
-            $reponse = $bdd->query('SELECT * FROM news WHERE parent=0 ORDER BY likes DESC');
+            $reponse = $bdd->prepare('SELECT * FROM news WHERE parent=0 ORDER BY likes DESC LIMIT :f, 10');
+            $reponse->bindValue(':f', $f, PDO::PARAM_INT);
+            $reponse->execute();
+            break;
+        case "rep":
+        ?>
+<h1>Last ideas replied</h1>
+        <?php
+            $reponse = $bdd->prepare('SELECT * FROM news ORDER BY id DESC LIMIT :f, 10');
+            $reponse->bindValue(':f', $f, PDO::PARAM_INT);
+            $reponse->execute();
+
             break;
         default:
         ?>
 <h1>Last ideas given</h1>
         <?php
-            $reponse = $bdd->query('SELECT * FROM news WHERE parent=0 ORDER BY id DESC');
+            $reponse = $bdd->prepare('SELECT * FROM news WHERE parent=0 ORDER BY id DESC LIMIT :f, 10');
+            $reponse->bindValue(':f', $f, PDO::PARAM_INT);
+            $reponse->execute();
             break;
     }
 }
@@ -142,11 +183,32 @@ else{
     ?>
         <h1>Last ideas given</h1>
     <?php
-    $reponse = $bdd->query('SELECT * FROM news WHERE parent=0 ORDER BY id DESC');
+    $reponse = $bdd->prepare("SELECT * FROM news WHERE parent=0 ORDER BY id DESC LIMIT :f, 10");
+    $reponse->bindValue(':f', $f, PDO::PARAM_INT);
+    $reponse->execute();
 }
+
+$nb = 0;
+$already = [];
 
 while ($donnees = $reponse->fetch())
 {
+    $nb += 1;
+
+    if(in_array($donnees['parent'], $already) OR in_array($donnees['id'], $already)){
+        continue;
+    }
+
+    if($donnees['titre'] == ''){
+        array_push($already, $donnees['parent']);
+        $subst = $bdd->prepare('SELECT * FROM news WHERE id=:id');
+        $subst->execute(array('id' => $donnees['parent']));
+        $donnees = $subst->fetch();
+    }
+    else{
+        array_push($already, $donnees['id']);
+    }
+
     $replies = $bdd->prepare('SELECT COUNT(*) FROM news WHERE parent=:parent');
     $replies->execute(array('parent' => $donnees['id']));
 ?>
@@ -158,18 +220,35 @@ while ($donnees = $reponse->fetch())
             <td class="td"><?php echo htmlspecialchars($donnees['date']); ?></td>
         </table>
         <p>
-            <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
+        <?php
+            $output = $donnees['contenu'];
+            include("./../beautiful.php");
+        ?>
         </p>
         <h7>
-        Replies: <?php echo $replies->fetchColumn() ?> ---- Likes: <?php echo $donnees['likes'] ?>
+        Replies: <?php echo $replies->fetchColumn() ?> ---- Likes: <?php 
+
+        echo $donnees['likes'] 
+
+        ?>
         </h7>
     </div>
     </a>
 <?php
 }
 $reponse->closeCursor();
-?>
 
+if(isset($_GET['disp']) AND $_GET['disp'] > 1){
+?>
+<a class="naviguate" href="output.php?cat=<?php if(isset($_GET['cat'])){echo $_GET['cat'];} ?>&disp=<?php if(isset($_GET['disp'])){echo (int) $_GET['disp']-1;}else{echo 1;} ?>">Previous</a>
+<?php
+}
+if($nb == 10){
+?>
+<a class="naviguate" href="output.php?cat=<?php if(isset($_GET['cat'])){echo $_GET['cat'];} ?>&disp=<?php if(isset($_GET['disp'])){echo (int) $_GET['disp']+1;}else{echo 2;} ?>">Next</a>
+<?php
+}
+?>
 </div>
 </body>
 </html>

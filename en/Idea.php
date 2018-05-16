@@ -26,7 +26,7 @@ if(isset($_POST['like'])){
             $trueown = $owner->fetch()['owner'];
 
             if($trueown != $_SESSION['username']){
-                $reputation = $bdd->prepare('UPDATE users SET points=points+1 WHERE username=:id');
+                $reputation = $bdd->prepare('UPDATE users SET points=points+2 WHERE username=:id');
                 $reputation->execute(array('id' => $trueown));
 
                 $main = $bdd->prepare('UPDATE news SET likes=likes+1 WHERE id=:id');
@@ -67,7 +67,7 @@ if(isset($_SESSION['username'])){
             $trueown = $owner->fetch()['owner'];
 
             if($trueown != $_SESSION['username']){
-                $reputation = $bdd->prepare('UPDATE users SET points=points+2 WHERE username=:id');
+                $reputation = $bdd->prepare('UPDATE users SET points=points+1 WHERE username=:id');
                 $reputation->execute(array('id' => $trueown));
             }
 
@@ -96,6 +96,7 @@ if(isset($_SESSION['username'])){
     <meta charset="utf-8"/>
     <link rel="stylesheet" type="text/css" href="./../color.css">
     <link rel="stylesheet" type="text/css" href="./../info.css">
+    <link rel="stylesheet" type="text/css" href="./../reset.css">
     <title>Une idée?</title>
     <style>
     h2{
@@ -184,6 +185,67 @@ if(isset($_SESSION['username'])){
     label input:checked + img{
     border:2px solid #f00;
     }
+
+        /* The Modal (background) */
+        .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        padding-top: 60px;
+    }
+
+    /* Modal Content/Box */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5px auto; /* 15% from the top and centered */
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+    }
+
+    /* The Close Button */
+    .close {
+        /* Position it in the top right corner outside of the modal */
+        position: absolute;
+        right: 25px;
+        top: 0;
+        color: #000;
+        font-size: 35px;
+        font-weight: bold;
+    }
+
+    /* Close button on hover */
+    .close:hover,
+    .close:focus {
+        color: red;
+        cursor: pointer;
+    }
+    .container{
+        padding: 20px;
+        text-align: center;
+    }
+
+    /* Add Zoom Animation */
+    .animate {
+        -webkit-animation: animatezoom 0.6s;
+        animation: animatezoom 0.6s
+    }
+
+    @-webkit-keyframes animatezoom {
+        from {-webkit-transform: scale(0)}
+        to {-webkit-transform: scale(1)}
+    }
+
+    @keyframes animatezoom {
+        from {transform: scale(0)}
+        to {transform: scale(1)}
+    } 
 </style>
 </head>
 <body>
@@ -192,6 +254,19 @@ if(isset($_SESSION['username'])){
 $activate = '2';
 include("menu.php");
 ?>
+
+<!-- The Modal -->
+<div id="id01" class="modal">
+  <span onclick="document.getElementById('id01').style.display='none'"
+class="close" title="Close Modal">&times;</span>
+
+  <!-- Modal Content -->
+    <div class="container" style="background-color:#f1f1f1">
+    <p id="showoff">
+        lol
+    </p>
+    </div>
+</div>
 
 <!--Input-->
 <div class="content" align="center">
@@ -224,7 +299,10 @@ else{
         <td><?php echo htmlspecialchars($retrive['date']); ?></td>
     </table>
     <p>
-        <?php echo nl2br(htmlspecialchars($retrive['contenu'])); ?>
+    <?php
+        $output = $retrive['contenu'];
+        include("./../beautiful.php");
+    ?>
     </p>
     Likes: <?php echo $retrive['likes'] ?>
     <form action="Idea.php?id=<?php echo $_GET['id'] ?>" method="POST">
@@ -251,7 +329,10 @@ while ($donnees = $reponse->fetch()){
             <td><?php echo htmlspecialchars($donnees['date']); ?></td>
         </table>
         <p>
-            <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
+        <?php
+            $output = $donnees['contenu'];
+            include("./../beautiful.php");
+        ?>
         </p>
         Likes: <?php echo $donnees['likes'] ?>
         <form action="Idea.php?id=<?php echo $_GET['id'] ?>" method="POST">
@@ -275,13 +356,52 @@ if(isset($_SESSION['username'])){
     <ul class="form-style-1">
         <li>
             <label>Reply</label>
+            <button onclick="addcol('**bold  bold**')" type=button><b>B</b></button>
+            <button onclick="addcol('**italic  italic**')" type=button><i>i</i></button>
+            <button onclick="addcol('**mark  mark**')" type=button><mark>M</mark></button>
+            <button onclick="addcol('**sup  sup**')" type=button><sup>s</sup></button>
+            <button onclick="addcol('**sub  sub**')" type=button><sub>s</sub></button>
+            <button onclick="addcol('**insert  insert**')" type=button><ins>N</ins></button>
+
             <textarea name="msg" id="msg" class="field-long field-textarea"></textarea>
+
+            <script>
+                function addcol(towrite){
+                    document.getElementById("msg").value += towrite;
+                }
+            </script>
         </li>
         <li>
             <input type="submit" value="Submit" />
         </li>
     </ul>
     </form>
+    <button type=button onclick="show()">preview</button>
+    <script>
+        function show(){
+            var temp = document.getElementById("msg").value;
+            var temp = temp.replace("**bold", "<b>");
+            var temp = temp.replace("bold**", "</b>");
+
+            var temp = temp.replace("**italic", "<i>");
+            var temp = temp.replace("italic**", "</i>");
+
+            var temp = temp.replace("**mark", "<mark>");
+            var temp = temp.replace("mark**", "</mark>");
+
+            var temp = temp.replace("**sup", "<sup>");
+            var temp = temp.replace("sup**", "</sup>");
+
+            var temp = temp.replace("**sub", "<sub>");
+            var temp = temp.replace("sub**", "</sub>");
+
+            var temp = temp.replace("**insert", "<ins>");
+            var temp = temp.replace("insert**", "</ins>");
+
+            document.getElementById("showoff").innerHTML = temp;
+            document.getElementById('id01').style.display='block';
+        }
+    </script>
     <?php
     }
 }

@@ -7,6 +7,7 @@ require_once("./../mdp.php");
 <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="./../color.css">
+    <link rel="stylesheet" type="text/css" href="./../reset.css">
     <title>Une idée?</title>
     <style>
     a.button {
@@ -94,7 +95,10 @@ while ($donnees = $reponse->fetch()){
             <td class="td"><?php echo htmlspecialchars($donnees['date']); ?></td>
         </table>
         <p>
-            <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
+        <?php
+            $output = $donnees['contenu'];
+            include("./../beautiful.php");
+        ?>
         </p>
         <h7>
         Replies: <?php echo $replies->fetchColumn() ?> ---- Likes: <?php echo $donnees['likes'] ?>

@@ -25,6 +25,7 @@ if(isset($_POST['pass'])){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="./../color.css">
+    <link rel="stylesheet" type="text/css" href="./../reset.css">
     <title>Une idée?</title>
     <style>
     .glob{
@@ -266,6 +267,44 @@ else{
 <div class="loged">
     <h2>Your email: <?php echo $_SESSION['mail'] ?></h2>
     <button onclick="document.getElementById('id01').style.display='block'"><h2>Change password</h2></button>
+<?php
+    $data = $bdd->prepare('SELECT * FROM users WHERE id=:id');
+    $data->execute(array('id' => $_SESSION['id']));
+    $data = $data->fetch();
+?>
+    <h2>Points: <?php echo $data['points'] ?></h2>
+    <?php
+    switch ($data['points']){
+        case $data['points'] = 0:
+            echo "<h2>nouveau</h2>";
+            break;
+        case $data['points'] > 500:
+            echo "<h2>génie</h2>";
+            break;
+        case $data['points'] > 400:
+            echo "<h2>homme de science</h2>";
+            break;
+        case $data['points'] > 300:
+            echo "<h2>concepteur</h2>";
+            break;
+        case $data['points'] > 250:
+            echo "<h2>penseur</h2>";
+            break;
+        case $data['points'] > 100:
+            echo "<h2>aviseur</h2>";
+            break;
+        case $data['points'] > 50:
+            echo "<h2>songeur</h2>";
+            break;
+        case $data['points'] > 20:
+            echo "<h2>rêveur</h2>";
+            break;
+        default:
+            echo "<h2>nouveau</h2>";
+            break;
+    }
+    ?>
+
     <form action="account.php" method="post">
         <input type="submit" name="logout" value="Log out">
     </form>
@@ -290,7 +329,10 @@ else{
                         <td><?php echo htmlspecialchars($donnees['date']); ?></td>
                     </table>
                     <p>
-                        <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
+                    <?php
+                        $output = $donnees['contenu'];
+                        include("./../beautiful.php");
+                    ?>
                     </p>
                     <form action="account.php#answers" method="post" onSubmit="return confirm('Are you sure you want to proceed?');">
                         <button type="submit" name="del" value="<?php echo $donnees['id'] ?>">Delete</button>
@@ -325,7 +367,10 @@ else{
                         
                     </td>
                     <td>
-                        <?php echo nl2br(htmlspecialchars($donnees['contenu'])); ?>
+                    <?php
+                        $output = $donnees['contenu'];
+                        include("./../beautiful.php");
+                    ?>
                     </td>
                     <td width="10px">
 
